@@ -18,8 +18,21 @@ connect().then((api) => {
 }).finally(() => process.exit());
 
 const keyring = new Keyring({ type: 'ethereum' });
-const mnemonic = mnemonicGenerate();
-const account = keyring.addFromMnemonic(mnemonic);
+// const mnemonic = mnemonicGenerate();
+// const account = keyring.addFromMnemonic(mnemonic);
 
-console.log(`Address: ${account.address}`);
-console.log(`Mnemonic: ${mnemonic}`);
+// console.log(`Address: ${account.address}`);
+// console.log(`Mnemonic: ${mnemonic}`);
+
+const createAccount = (mnemonic) => {
+    mnemonic = mnemonic && mnemonicValidate(mnemonic) ? mnemonic : mnemonicGenerate();
+    const account = keyring.addFromMnemonic(mnemonic);
+    return { account, mnemonic };
+}
+
+const { account: acc1, mnemonic } = createAccount();
+const { account: acc2 } = createAccount(mnemonic);
+
+console.log(`Mnemonic: "${mnemonic}"`);
+console.log(`- Address 1: ${acc1.address}`);
+console.log(`- Address 2: ${acc2.address}`);

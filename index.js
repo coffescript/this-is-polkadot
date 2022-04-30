@@ -1,38 +1,41 @@
 'use strict';
 
-const { ApiPromise, WsProvider } = require('@polkadot/api');
-const { mnemonicGenerate } = require('@polkadot/util-crypto');
-const { Keyring } = require('@polkadot/keyring');
-const { mnemonicValidate } = require('@polkadot/util-crypto');
-
+const {
+    mnemonicGenerate,
+    mnemonicValidate
+} = require('@polkadot/util-crypto');
+const {
+    ApiPromise,
+    WsProvider
+} = require('@polkadot/api');
+const {
+    Keyring
+} = require('@polkadot/keyring');
+const keyring = new Keyring({ type: 'sr25519' });
 const connect = async () => {
     const wsProvider = new WsProvider('ws://127.0.0.1:9944');
     const api = new ApiPromise({ provider: wsProvider });
     return api.isReady;
-}
-
-connect().then((api) => {
-    console.log(`Our client is connected: ${api.isConnected}`);
-}).catch((error) => {
-    console.log(error);
-}).finally(() => process.exit());
-
-const keyring = new Keyring({ type: 'ethereum' });
-// const mnemonic = mnemonicGenerate();
-// const account = keyring.addFromMnemonic(mnemonic);
-
-// console.log(`Address: ${account.address}`);
-// console.log(`Mnemonic: ${mnemonic}`);
+};
 
 const createAccount = (mnemonic) => {
-    mnemonic = mnemonic && mnemonicValidate(mnemonic) ? mnemonic : mnemonicGenerate();
+    mnemonic = mnemonic && mnemonicValidate(mnemonic)
+        ? mnemonic
+        : mnemonicGenerate();
     const account = keyring.addFromMnemonic(mnemonic);
     return { account, mnemonic };
 }
+const main = async (api) => {
+    console.log(`Our client is connected: ${api.isConnected}`);
 
-const { account: acc1, mnemonic } = createAccount();
-const { account: acc2 } = createAccount(mnemonic);
-
-console.log(`Mnemonic: "${mnemonic}"`);
-console.log(`- Address 1: ${acc1.address}`);
-console.log(`- Address 2: ${acc2.address}`);
+    const mnemonic = 'cruel leader remember night skill clump question focus nurse neck battle federal';
+    const { account: medium1 } = createAccount(mnemonic);
+    const balance = await api.derive.balances.all(medium1.address);
+    const available = balance.availableBalance.toNumber();
+    const dots = available / (10 ** api.registry.chainDecimals);
+    const print = dots.toFixed(4);
+    console.log(`Address ${medium1.address} has ${print} DOT`);
+};
+connect().then(main).catch((err) => {
+    console.error(err)
+}).finally(() => process.exit());

@@ -1,0 +1,16 @@
+{
+  "name": "this-is-polkadot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/coffescript/this-is-polkadot.git",
+  "author": "Deiby Mejia <dmejia1204@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@polkadot/api": "^8.2.1",
+    "@polkadot/keyring": "^9.0.1",
+    "@polkadot/util-crypto": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  }
+}
